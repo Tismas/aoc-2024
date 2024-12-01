@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advent of Code 2024</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #ccc;
+        --bg-hover: #bbb;
+        --bg-active: #aaa;
+        --fg: #111;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111;
+          --bg-hover: #222;
+          --bg-active: #333;
+          --fg: #ccc;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Inter", sans-serif;
+        font-optical-sizing: auto;
+      }
+      canvas {
+        display: block;
+      }
+      #days {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .day-tile {
+        padding: 16px 32px;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      .day-tile.active {
+        background: var(--bg-active);
+      }
+      .day-tile:hover {
+        background: var(--bg-hover);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="days"></div>
+    <canvas id="solution"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
