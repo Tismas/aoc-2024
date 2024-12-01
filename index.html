@@ -42,27 +42,40 @@
       canvas {
         display: block;
       }
+      button {
+        background: var(--bg);
+        outline: none;
+        border: none;
+        color: var(--fg);
+        padding: 16px 32px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button.active {
+        background: var(--bg-active);
+      }
+      button:hover {
+        background: var(--bg-hover);
+      }
       #days {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
       }
       .day-tile {
-        padding: 16px 32px;
-        cursor: pointer;
-        border-radius: 8px;
       }
       .day-tile.active {
-        background: var(--bg-active);
       }
       .day-tile:hover {
-        background: var(--bg-hover);
       }
     </style>
-    <script type="module" crossorigin src="/assets/index-5nrsmTYA.js"></script>
+    <script type="module" crossorigin src="/assets/index-Fn__PEkc.js"></script>
   </head>
   <body>
-    <div id="days"></div>
+    <div id="ui">
+      <div id="days"></div>
+      <div id="part"></div>
+    </div>
     <canvas id="solution"></canvas>
   </body>
 </html>
