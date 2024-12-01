@@ -12,32 +12,30 @@ const spacingX = 200;
 const fontSize = 24;
 
 export const part1 = async (ctx: CanvasRenderingContext2D) => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
   const rows = input.split("\n").map((line) => line.split("   ").map(Number));
   const [left, right] = zip(...rows);
   const leftSorted = [...left].sort((e1, e2) => e1 - e2);
   const rightSorted = [...right].sort((e1, e2) => e1 - e2);
 
-  const leftAnimatedLabels = getAnimatedLabels(ctx, left, -spacingX / 2);
-  const rightAnimatedLabels = getAnimatedLabels(ctx, right, spacingX / 2);
+  const leftLabelAnimation = getAnimatedLabels(ctx, left, -spacingX / 2);
+  const rightLabelAnimations = getAnimatedLabels(ctx, right, spacingX / 2);
 
-  const labels = [...leftAnimatedLabels, ...rightAnimatedLabels];
-  await runAnimation(ctx, labels);
+  const labelAnimations = [...leftLabelAnimation, ...rightLabelAnimations];
+  await runAnimation(ctx, labelAnimations);
 
-  const distanceLines = getAnimatedDistanceLines(ctx, left.length);
-  await runAnimation(ctx, distanceLines, labels);
-
-  const [distanceLabels, distances] = getDistances(
+  const [distanceAnimation, distances] = getAnimatedDistances(
     ctx,
     leftSorted,
     rightSorted
   );
-  await runAnimation(ctx, distanceLabels, [...distanceLines, ...labels]);
+  await runAnimation(ctx, distanceAnimation, labelAnimations);
 
-  const resultLabels = getResultLabels(ctx, distances);
+  const resultLabels = getAnimatedResult(ctx, distances);
   await runAnimation(ctx, resultLabels, [
-    ...distanceLabels,
-    ...distanceLines,
-    ...labels,
+    ...distanceAnimation,
+    ...labelAnimations,
   ]);
 };
 
@@ -58,32 +56,38 @@ const getAnimatedLabels = (
       (sortedElement) => sortedElement.id === element.id
     );
     const x = ctx.canvas.width / 2 + offsetX;
-    const startPosition = new Vector2(x, marginY + index * spacingY);
+    const position = new Vector2(x, marginY + index * spacingY);
     const targetPosition = new Vector2(x, marginY + targetIndex * spacingY);
 
     return new AnimatedLabel({
       ctx,
-      startPosition,
-      targetPosition,
-      delay: 1000,
+      position,
+      opacity: 0,
       label: element.value.toString(),
       font: `${fontSize}px Inter`,
-    });
+    })
+      .animateOpacity(1, 500)
+      .animatePosition(targetPosition, 1000, 1000);
   });
 };
 
-const getAnimatedDistanceLines = (
+const getAnimatedDistances = (
   ctx: CanvasRenderingContext2D,
-  rows: number
-): Array<AnimatedLine> => {
-  const lines = [];
+  left: Array<number>,
+  right: Array<number>
+): [Array<AnimatedLine | AnimatedLabel>, Array<number>] => {
+  const animations = [];
+  const distances = [];
   const margin = 20;
+  const rows = left.length;
 
   for (let i = 0; i < rows; i++) {
     const y = marginY + spacingY * i;
+    const distance = Math.abs(left[i] - right[i]);
+    distances.push(distance);
 
     // left line
-    lines.push(
+    animations.push(
       new AnimatedLine({
         ctx,
         startPosition: new Vector2(
@@ -91,11 +95,10 @@ const getAnimatedDistanceLines = (
           y
         ),
         targetPosition: new Vector2(ctx.canvas.width / 2 - margin, y),
-        duration: 500,
-      })
+      }).animateDrawing(500, i * 100)
     );
     // right line
-    lines.push(
+    animations.push(
       new AnimatedLine({
         ctx,
         startPosition: new Vector2(
@@ -103,64 +106,44 @@ const getAnimatedDistanceLines = (
           y
         ),
         targetPosition: new Vector2(ctx.canvas.width / 2 + margin, y),
-        duration: 500,
-      })
+      }).animateDrawing(500, i * 100)
     );
-  }
 
-  return lines;
-};
-
-const getDistances = (
-  ctx: CanvasRenderingContext2D,
-  left: Array<number>,
-  right: Array<number>
-): [Array<AnimatedLabel>, Array<number>] => {
-  const distanceLabels = [];
-  const distances = [];
-
-  for (let i = 0; i < left.length; i++) {
-    const distance = Math.abs(left[i] - right[i]);
-    distances.push(distance);
+    // labels
     const position = new Vector2(ctx.canvas.width / 2, marginY + i * spacingY);
-
-    distanceLabels.push(
+    animations.push(
       new AnimatedLabel({
         ctx,
-        startPosition: position,
+        position,
         label: distance.toString(),
-        startOpacity: 0,
-        targetOpacity: 1,
-        duration: 500,
-      })
+        opacity: 0,
+      }).animateOpacity(1, 500, i * 100)
     );
   }
 
-  return [distanceLabels, distances];
+  return [animations, distances];
 };
 
-const getResultLabels = (
+const getAnimatedResult = (
   ctx: CanvasRenderingContext2D,
   distances: number[]
 ): Array<AnimatedLabel> => {
   const total = sum(distances);
 
-  const equals = new AnimatedLabel({
+  const equalsAnimation = new AnimatedLabel({
     ctx,
-    startPosition: new Vector2(ctx.canvas.width / 2, marginY - 30),
-    startRotation: Math.PI / 2,
-    startOpacity: 0,
-    targetOpacity: 1,
+    position: new Vector2(ctx.canvas.width / 2, marginY - 30),
+    rotation: Math.PI / 2,
+    opacity: 0,
     label: "=",
-  });
-  const result = new AnimatedLabel({
+  }).animateOpacity(1, 500);
+  const resultAnimation = new AnimatedLabel({
     ctx,
-    startPosition: new Vector2(ctx.canvas.width / 2, marginY - 60),
-    startOpacity: 0,
-    targetOpacity: 1,
+    position: new Vector2(ctx.canvas.width / 2, marginY - 60),
+    opacity: 0,
     label: total.toString(),
-  });
+  }).animateOpacity(1, 500);
 
   console.log("Part 1:", total);
-  return [equals, result];
+  return [equalsAnimation, resultAnimation];
 };

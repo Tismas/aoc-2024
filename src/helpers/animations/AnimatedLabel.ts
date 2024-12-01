@@ -1,24 +1,16 @@
-import { lerp, lerpVector } from "../lerp";
 import { Vector2 } from "../Vector2";
+import { FieldAnimation } from "./AnimatedField";
 import { Animatable, Drawable } from "./Traits";
 
 interface Args {
   ctx: CanvasRenderingContext2D;
   label: string;
+  position: Vector2;
   font?: string;
   color?: string;
-
-  startPosition: Vector2;
-  targetPosition?: Vector2;
-
-  startRotation?: number;
-  targetRotation?: number;
-
-  startOpacity?: number;
-  targetOpacity?: number;
-
-  duration?: number;
-  delay?: number;
+  opacity?: number;
+  rotation?: number;
+  textAlign?: CanvasTextAlign;
 }
 
 export class AnimatedLabel implements Animatable, Drawable {
@@ -26,89 +18,98 @@ export class AnimatedLabel implements Animatable, Drawable {
   private label: string;
   private font: string;
   private color: string;
+  private textAlign: CanvasTextAlign;
 
+  private positionAnimations: FieldAnimation<Vector2>[];
   private position: Vector2;
-  private startPosition: Vector2;
-  private targetPosition: Vector2;
 
-  private rotation: number;
-  private startRotation: number;
-  private targetRotation: number;
-
+  private opacityAnimations: FieldAnimation<number>[];
   private opacity: number;
-  private startOpacity: number;
-  private targetOpacity: number;
 
-  private duration: number;
-  private animationStart: number;
+  private rotationAnimations: FieldAnimation<number>[];
+  private rotation: number;
 
   constructor({
-    startPosition,
-    targetPosition = startPosition,
-    startRotation = 0,
-    targetRotation = startRotation,
-    startOpacity = 1,
-    targetOpacity = startOpacity,
     ctx,
     label,
+    position,
     font = "24px Inter",
     color = getComputedStyle(ctx.canvas).getPropertyValue("--fg"),
-    duration = 1000,
-    delay = 0,
+    rotation = 0,
+    opacity = 1,
+    textAlign = "center",
   }: Args) {
     this.ctx = ctx;
     this.label = label;
     this.font = font;
     this.color = color;
+    this.textAlign = textAlign;
 
-    this.position = startPosition;
-    this.startPosition = startPosition;
-    this.targetPosition = targetPosition;
+    this.positionAnimations = [];
+    this.position = position;
 
-    this.rotation = startRotation;
-    this.startRotation = startRotation;
-    this.targetRotation = targetRotation;
+    this.opacityAnimations = [];
+    this.opacity = opacity;
 
-    this.opacity = startOpacity;
-    this.startOpacity = startOpacity;
-    this.targetOpacity = targetOpacity;
-
-    this.duration = duration;
-    this.animationStart = Date.now() + delay;
+    this.rotationAnimations = [];
+    this.rotation = rotation;
   }
 
-  private update(): boolean {
-    const currentAnimationTime = Date.now() - this.animationStart;
-    const animationProgress = currentAnimationTime / this.duration;
-    if (currentAnimationTime < 0) return false;
+  animatePosition(targetPosition: Vector2, duration: number, delay = 0) {
+    this.positionAnimations.push(
+      new FieldAnimation({
+        getCurrentValue: () => this.position,
+        targetValue: targetPosition,
+        duration: duration,
+        delay,
+      })
+    );
+    return this;
+  }
 
-    if (currentAnimationTime >= this.duration) {
-      this.position = this.targetPosition;
-      return true;
-    } else {
-      this.position = lerpVector(
-        this.startPosition,
-        this.targetPosition,
-        animationProgress
-      );
-      this.opacity = lerp(
-        this.startOpacity,
-        this.targetOpacity,
-        animationProgress
-      );
-      this.rotation = lerp(
-        this.startRotation,
-        this.targetRotation,
-        animationProgress
-      );
-      return false;
+  animateOpacity(targetOpacity: number, duration: number, delay = 0) {
+    this.opacityAnimations.push(
+      new FieldAnimation({
+        getCurrentValue: () => this.opacity,
+        targetValue: targetOpacity,
+        duration,
+        delay,
+      })
+    );
+    return this;
+  }
+
+  animateRotation(targetRotation: number, duration: number, delay = 0) {
+    this.rotationAnimations.push(
+      new FieldAnimation({
+        getCurrentValue: () => this.rotation,
+        targetValue: targetRotation,
+        duration,
+        delay,
+      })
+    );
+    return this;
+  }
+
+  private update() {
+    for (const animation of this.positionAnimations) {
+      if (!animation.hasStarted() || animation.isFinished) continue;
+      this.position = animation.tick();
+    }
+    for (const animation of this.opacityAnimations) {
+      if (!animation.hasStarted() || animation.isFinished) continue;
+      this.opacity = animation.tick();
+    }
+    for (const animation of this.rotationAnimations) {
+      if (!animation.hasStarted() || animation.isFinished) continue;
+      this.rotation = animation.tick();
     }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.save();
 
-    ctx.textAlign = "center";
+    ctx.textAlign = this.textAlign;
     ctx.textBaseline = "middle";
     ctx.globalAlpha = this.opacity;
     ctx.fillStyle = this.color;
@@ -122,8 +123,13 @@ export class AnimatedLabel implements Animatable, Drawable {
   }
 
   tick(): boolean {
-    const done = this.update();
+    this.update();
     this.draw(this.ctx);
-    return done;
+
+    return (
+      (this.opacityAnimations.every((anim) => anim.isFinished) ?? true) &&
+      (this.positionAnimations.every((anim) => anim.isFinished) ?? true) &&
+      (this.rotationAnimations.every((anim) => anim.isFinished) ?? true)
+    );
   }
 }
