@@ -39,8 +39,6 @@ export const part1 = async (ctx: CanvasRenderingContext2D) => {
   ]);
 };
 
-// export const part2 = (ctx: CanvasRenderingContext2D) => {};
-
 const getAnimatedLabels = (
   ctx: CanvasRenderingContext2D,
   column: Array<number>,
@@ -64,7 +62,7 @@ const getAnimatedLabels = (
       position,
       opacity: 0,
       label: element.value.toString(),
-      font: `${fontSize}px Inter`,
+      fontSize,
     })
       .animateOpacity(1, 500)
       .animatePosition(targetPosition, 1000, 1000);

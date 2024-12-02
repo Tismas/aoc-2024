@@ -2,14 +2,18 @@ import { Vector2 } from "../Vector2";
 import { FieldAnimation } from "./AnimatedField";
 import { Animatable, Drawable } from "./Traits";
 
+type RotationOrigin = "right" | "center" | "left";
+
 interface Args {
   ctx: CanvasRenderingContext2D;
   label: string;
   position: Vector2;
-  font?: string;
+  fontSize?: number;
+  fontFamily?: string;
   color?: string;
   opacity?: number;
   rotation?: number;
+  rotationOrigin?: RotationOrigin;
   textAlign?: CanvasTextAlign;
 }
 
@@ -28,20 +32,23 @@ export class AnimatedLabel implements Animatable, Drawable {
 
   private rotationAnimations: FieldAnimation<number>[];
   private rotation: number;
+  private rotationOrigin: RotationOrigin;
 
   constructor({
     ctx,
     label,
     position,
-    font = "24px Inter",
+    fontSize = 24,
+    fontFamily = "Inter",
     color = getComputedStyle(ctx.canvas).getPropertyValue("--fg"),
     rotation = 0,
     opacity = 1,
     textAlign = "center",
+    rotationOrigin = "center",
   }: Args) {
     this.ctx = ctx;
     this.label = label;
-    this.font = font;
+    this.font = `${fontSize}px ${fontFamily}`;
     this.color = color;
     this.textAlign = textAlign;
 
@@ -53,6 +60,7 @@ export class AnimatedLabel implements Animatable, Drawable {
 
     this.rotationAnimations = [];
     this.rotation = rotation;
+    this.rotationOrigin = rotationOrigin;
   }
 
   animatePosition(targetPosition: Vector2, duration: number, delay = 0) {
@@ -115,8 +123,24 @@ export class AnimatedLabel implements Animatable, Drawable {
     ctx.fillStyle = this.color;
     ctx.font = this.font;
 
+    const textWidth = ctx.measureText(this.label).width;
+    if (this.rotationOrigin === "left") {
+      ctx.translate(-textWidth / 2, 0);
+    }
+    if (this.rotationOrigin === "right") {
+      ctx.translate(textWidth / 2, 0);
+    }
+
     ctx.translate(this.position.x, this.position.y);
     ctx.rotate(this.rotation);
+
+    if (this.rotationOrigin === "left") {
+      ctx.translate(textWidth / 2, 0);
+    }
+    if (this.rotationOrigin === "right") {
+      ctx.translate(-textWidth / 2, 0);
+    }
+
     ctx.fillText(this.label, 0, 0);
 
     ctx.restore();

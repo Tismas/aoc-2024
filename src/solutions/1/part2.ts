@@ -53,7 +53,7 @@ const getAnimatedLabels = (
       position,
       opacity: 0,
       label: element.toString(),
-      font: `${fontSize}px Inter`,
+      fontSize,
     }).animateOpacity(1, 500);
   });
 };
