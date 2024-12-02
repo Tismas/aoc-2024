@@ -107,7 +107,7 @@ const animateReport = async (
 
       return retryLeft || retryRight;
     } else {
-      animateThrowAway(ctx, reportLabel);
+      setTimeout(() => animateThrowAway(ctx, reportLabel), 0);
     }
   }
   removeStaticContent([reportLabel]);
