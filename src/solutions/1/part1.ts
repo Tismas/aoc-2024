@@ -12,44 +12,32 @@ const spacingX = 200;
 const fontSize = 24;
 
 export const part1 = async (ctx: CanvasRenderingContext2D) => {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
   const rows = input.split("\n").map((line) => line.split("   ").map(Number));
   const [left, right] = zip(...rows);
   const leftSorted = [...left].sort((e1, e2) => e1 - e2);
   const rightSorted = [...right].sort((e1, e2) => e1 - e2);
 
-  const leftLabelAnimation = getAnimatedLabels(ctx, left, -spacingX / 2);
-  const rightLabelAnimations = getAnimatedLabels(ctx, right, spacingX / 2);
-
-  const labelAnimations = [...leftLabelAnimation, ...rightLabelAnimations];
-  await runAnimation(ctx, labelAnimations);
-
-  const [distanceAnimation, distances] = getAnimatedDistances(
-    ctx,
-    leftSorted,
-    rightSorted
-  );
-  await runAnimation(ctx, distanceAnimation, labelAnimations);
-
-  const resultLabels = getAnimatedResult(ctx, distances);
-  await runAnimation(ctx, resultLabels, [
-    ...distanceAnimation,
-    ...labelAnimations,
+  await Promise.all([
+    animateLabels(ctx, left, -spacingX / 2),
+    animateLabels(ctx, right, spacingX / 2),
   ]);
+
+  const distances = await animateDistances(ctx, leftSorted, rightSorted);
+  const result = await animateResults(ctx, distances);
+  console.log("Part 1", result);
 };
 
-const getAnimatedLabels = (
+const animateLabels = (
   ctx: CanvasRenderingContext2D,
   column: Array<number>,
   offsetX: number
-): Array<AnimatedLabel> => {
+): Promise<void> => {
   const columnWithIds = column.map((value, index) => ({ value, id: index }));
   const sortedWithIds = [...columnWithIds].sort(
     (e1, e2) => e1.value - e2.value
   );
 
-  return columnWithIds.map((element, index) => {
+  const animations = columnWithIds.map((element, index) => {
     const targetIndex = sortedWithIds.findIndex(
       (sortedElement) => sortedElement.id === element.id
     );
@@ -63,17 +51,20 @@ const getAnimatedLabels = (
       opacity: 0,
       label: element.value.toString(),
       fontSize,
+      keepDrawingAfterAnimation: true,
     })
       .animateOpacity(1, 500)
       .animatePosition(targetPosition, 1000, 1000);
   });
+
+  return runAnimation(ctx, animations);
 };
 
-const getAnimatedDistances = (
+const animateDistances = async (
   ctx: CanvasRenderingContext2D,
   left: Array<number>,
   right: Array<number>
-): [Array<AnimatedLine | AnimatedLabel>, Array<number>] => {
+): Promise<Array<number>> => {
   const animations = [];
   const distances = [];
   const margin = 20;
@@ -93,6 +84,7 @@ const getAnimatedDistances = (
           y
         ),
         targetPosition: new Vector2(ctx.canvas.width / 2 - margin, y),
+        keepDrawingAfterAnimation: true,
       }).animateDrawing(500, i * 100)
     );
     // right line
@@ -104,6 +96,7 @@ const getAnimatedDistances = (
           y
         ),
         targetPosition: new Vector2(ctx.canvas.width / 2 + margin, y),
+        keepDrawingAfterAnimation: true,
       }).animateDrawing(500, i * 100)
     );
 
@@ -115,17 +108,20 @@ const getAnimatedDistances = (
         position,
         label: distance.toString(),
         opacity: 0,
+        keepDrawingAfterAnimation: true,
       }).animateOpacity(1, 500, i * 100)
     );
   }
 
-  return [animations, distances];
+  await runAnimation(ctx, animations);
+
+  return distances;
 };
 
-const getAnimatedResult = (
+const animateResults = async (
   ctx: CanvasRenderingContext2D,
   distances: number[]
-): Array<AnimatedLabel> => {
+): Promise<number> => {
   const total = sum(distances);
 
   const equalsAnimation = new AnimatedLabel({
@@ -134,14 +130,17 @@ const getAnimatedResult = (
     rotation: Math.PI / 2,
     opacity: 0,
     label: "=",
+    keepDrawingAfterAnimation: true,
   }).animateOpacity(1, 500);
   const resultAnimation = new AnimatedLabel({
     ctx,
     position: new Vector2(ctx.canvas.width / 2, marginY - 60),
     opacity: 0,
     label: total.toString(),
+    keepDrawingAfterAnimation: true,
   }).animateOpacity(1, 500);
 
-  console.log("Part 1:", total);
-  return [equalsAnimation, resultAnimation];
+  await runAnimation(ctx, [equalsAnimation, resultAnimation]);
+
+  return total;
 };

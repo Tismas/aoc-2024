@@ -1,3 +1,5 @@
+import { clearCanvas } from "./helpers/animations/runAnimations";
+
 const uiContainer = document.getElementById("ui")!;
 const daysContainer = document.getElementById("days")!;
 const partContainer = document.getElementById("part")!;
@@ -6,7 +8,6 @@ const ctx = solutionCanvas.getContext("2d")!;
 
 window.addEventListener("resize", handleResize);
 let activeModule: Module | null = null;
-let partButtonsAdded = false;
 
 interface Module {
   part1: (ctx: CanvasRenderingContext2D) => void;
@@ -22,10 +23,10 @@ function handleResize() {
 }
 
 function addPartButtons() {
-  partButtonsAdded = true;
   const part1Button = document.createElement("button");
   part1Button.textContent = "Part 1";
   part1Button.onclick = () => {
+    clearCanvas();
     activeModule?.part1(ctx);
     part1Button.classList.add("active");
     part2Button.classList.remove("active");
@@ -33,6 +34,7 @@ function addPartButtons() {
   const part2Button = document.createElement("button");
   part2Button.textContent = "Part 2";
   part2Button.onclick = () => {
+    clearCanvas();
     activeModule?.part2(ctx);
     part1Button.classList.remove("active");
     part2Button.classList.add("active");
@@ -53,14 +55,15 @@ async function addDayButtons() {
       dayTile.textContent = `Day ${i}`;
       dayTile.onclick = () => {
         activeModule = module;
+        clearCanvas();
+        partContainer.replaceChildren();
+
         for (const tile of daysContainer.getElementsByClassName("day-tile")) {
           tile.classList.remove("active");
         }
         dayTile.classList.add("active");
 
-        if (!partButtonsAdded) {
-          addPartButtons();
-        }
+        addPartButtons();
       };
       daysContainer.appendChild(dayTile);
     } catch (e) {

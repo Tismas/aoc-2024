@@ -1,15 +1,16 @@
 import { Vector2 } from "../Vector2";
 import { FieldAnimation } from "./AnimatedField";
-import { Animatable, Drawable } from "./Traits";
+import { Animatable } from "./Traits";
 
 interface Args {
   ctx: CanvasRenderingContext2D;
   color?: string;
   startPosition: Vector2;
   targetPosition: Vector2;
+  keepDrawingAfterAnimation?: boolean;
 }
 
-export class AnimatedLine implements Animatable, Drawable {
+export class AnimatedLine implements Animatable {
   private ctx: CanvasRenderingContext2D;
   private color: string;
 
@@ -17,12 +18,14 @@ export class AnimatedLine implements Animatable, Drawable {
   private startPosition: Vector2;
   private targetPosition: Vector2;
   private endPosition: Vector2;
+  keepDrawingAfterAnimation: boolean;
 
   constructor({
     ctx,
     startPosition,
     targetPosition,
     color = getComputedStyle(ctx.canvas).getPropertyValue("--fg"),
+    keepDrawingAfterAnimation = false,
   }: Args) {
     this.ctx = ctx;
     this.color = color;
@@ -31,6 +34,7 @@ export class AnimatedLine implements Animatable, Drawable {
     this.targetPosition = targetPosition;
     this.endPosition = targetPosition;
     this.drawingAnimations = [];
+    this.keepDrawingAfterAnimation = keepDrawingAfterAnimation;
   }
 
   animateDrawing(duration: number, delay = 0) {

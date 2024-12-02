@@ -1,6 +1,6 @@
 import { Vector2 } from "../Vector2";
 import { FieldAnimation } from "./AnimatedField";
-import { Animatable, Drawable } from "./Traits";
+import { Animatable } from "./Traits";
 
 type RotationOrigin = "right" | "center" | "left";
 
@@ -15,9 +15,10 @@ interface Args {
   rotation?: number;
   rotationOrigin?: RotationOrigin;
   textAlign?: CanvasTextAlign;
+  keepDrawingAfterAnimation?: boolean;
 }
 
-export class AnimatedLabel implements Animatable, Drawable {
+export class AnimatedLabel implements Animatable {
   private ctx: CanvasRenderingContext2D;
   private label: string;
   private font: string;
@@ -33,6 +34,7 @@ export class AnimatedLabel implements Animatable, Drawable {
   private rotationAnimations: FieldAnimation<number>[];
   private rotation: number;
   private rotationOrigin: RotationOrigin;
+  keepDrawingAfterAnimation: boolean;
 
   constructor({
     ctx,
@@ -45,6 +47,7 @@ export class AnimatedLabel implements Animatable, Drawable {
     opacity = 1,
     textAlign = "center",
     rotationOrigin = "center",
+    keepDrawingAfterAnimation = false,
   }: Args) {
     this.ctx = ctx;
     this.label = label;
@@ -61,6 +64,7 @@ export class AnimatedLabel implements Animatable, Drawable {
     this.rotationAnimations = [];
     this.rotation = rotation;
     this.rotationOrigin = rotationOrigin;
+    this.keepDrawingAfterAnimation = keepDrawingAfterAnimation;
   }
 
   animatePosition(targetPosition: Vector2, duration: number, delay = 0) {

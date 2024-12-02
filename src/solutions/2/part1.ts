@@ -1,6 +1,9 @@
 import { AnimatedLabel } from "../../helpers/animations/AnimatedLabel";
 import { AnimatedLine } from "../../helpers/animations/AnimatedLine";
-import { runAnimation } from "../../helpers/animations/runAnimations";
+import {
+  removeStaticContent,
+  runAnimation,
+} from "../../helpers/animations/runAnimations";
 import { Vector2 } from "../../helpers/Vector2";
 import input from "./input.txt?raw";
 
@@ -17,49 +20,48 @@ export const part1 = async (ctx: CanvasRenderingContext2D) => {
     label: "Safe reports:",
     opacity: 0,
     position: new Vector2(ctx.canvas.width / 2, 100),
+    keepDrawingAfterAnimation: true,
   }).animateOpacity(1, 500);
-  const animatedScoreValue = new AnimatedLabel({
+  let animatedScoreValue = new AnimatedLabel({
     ctx,
     fontFamily: "Monospace",
     fontSize: 48,
     label: score.toString(),
     opacity: 0,
     position: new Vector2(ctx.canvas.width / 2 + 200, 100),
+    keepDrawingAfterAnimation: true,
   }).animateOpacity(1, 500);
-  const scoreLabels = [animatedScoreLabel, animatedScoreValue];
+  runAnimation(ctx, [animatedScoreLabel, animatedScoreValue]);
 
-  runAnimation(ctx, scoreLabels);
   for (const report of reports) {
-    const isSafe = await animateReport(ctx, report, scoreLabels);
+    const isSafe = await animateReport(ctx, report);
     if (isSafe) {
       score += 1;
       const oldAnimatedScore = animatedScoreValue
         .animateOpacity(0, 200)
         .animatePosition(new Vector2(ctx.canvas.width / 2 + 200, 50), 200);
-      scoreLabels[1] = new AnimatedLabel({
+      animatedScoreValue = new AnimatedLabel({
         ctx,
         fontFamily: "Monospace",
         fontSize: 48,
         label: score.toString(),
         opacity: 0,
         position: new Vector2(ctx.canvas.width / 2 + 200, 150),
+        keepDrawingAfterAnimation: true,
       })
-        .animateOpacity(1, 200)
+        .animateOpacity(1, 210)
         .animatePosition(new Vector2(ctx.canvas.width / 2 + 200, 100), 200);
-      await runAnimation(
-        ctx,
-        [oldAnimatedScore, scoreLabels[1]],
-        [animatedScoreLabel]
-      );
+      await runAnimation(ctx, [oldAnimatedScore, animatedScoreValue]);
+      removeStaticContent([oldAnimatedScore]);
     }
   }
 };
 
 const animateReport = async (
   ctx: CanvasRenderingContext2D,
-  report: number[],
-  staticLabels: AnimatedLabel[]
-) => {
+  report: number[]
+): Promise<boolean> => {
+  let isReportSafe = true;
   const entryAnimations = [];
   const expectedSign = Math.sign(report[1] - report[0]);
 
@@ -76,9 +78,10 @@ const animateReport = async (
       fontSize: 48,
       fontFamily: "Monospace",
       rotationOrigin: "right",
+      keepDrawingAfterAnimation: true,
     }).animatePosition(targetPosition, 500)
   );
-  await runAnimation(ctx, entryAnimations, staticLabels);
+  await runAnimation(ctx, entryAnimations);
 
   for (let rightIndex = 1; rightIndex < report.length; rightIndex++) {
     const pairAnimations = [];
@@ -96,6 +99,7 @@ const animateReport = async (
           leftX + lineWidth + leftIndex * spacing,
           middleY - 50
         ),
+        keepDrawingAfterAnimation: true,
       }).animateDrawing(500, 500)
     );
     const rightArrowOffset = 60;
@@ -110,6 +114,7 @@ const animateReport = async (
           leftX + rightArrowOffset - lineWidth + leftIndex * spacing,
           middleY - 50
         ),
+        keepDrawingAfterAnimation: true,
       }).animateDrawing(500, 500)
     );
 
@@ -126,13 +131,13 @@ const animateReport = async (
           middleY - 65
         ),
         opacity: 0,
+        keepDrawingAfterAnimation: true,
       }).animateOpacity(1, 500, 750)
     );
 
-    await runAnimation(ctx, pairAnimations, [
-      ...entryAnimations,
-      ...staticLabels,
-    ]);
+    await runAnimation(ctx, pairAnimations);
+    removeStaticContent(pairAnimations);
+
     if (!isSafe) {
       entryAnimations[0]
         .animateRotation(-Math.PI * 0.1, 50, 250)
@@ -146,9 +151,11 @@ const animateReport = async (
           400,
           1300
         );
-      await runAnimation(ctx, entryAnimations, staticLabels);
-      return false;
+      await runAnimation(ctx, entryAnimations);
+      isReportSafe = false;
+      break;
     }
   }
-  return true;
+  removeStaticContent(entryAnimations);
+  return isReportSafe;
 };
