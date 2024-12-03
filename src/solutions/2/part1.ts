@@ -132,7 +132,7 @@ const animateReport = async (
         ),
         opacity: 0,
         keepDrawingAfterAnimation: true,
-      }).animateOpacity(1, 500, 750)
+      }).animateOpacity(1, 500, { delay: 750 })
     );
 
     await runAnimation(ctx, pairAnimations);
@@ -140,17 +140,15 @@ const animateReport = async (
 
     if (!isSafe) {
       entryAnimations[0]
-        .animateRotation(-Math.PI * 0.1, 50, 250)
-        .animateRotation(-Math.PI * 0.3, 100, 300)
-        .animateRotation(-Math.PI * 0.4, 200, 400)
-        .animateRotation(-Math.PI * 0.42, 500, 600)
-        .animateRotation(Math.PI / 3, 200, 1100)
-        .animateRotation(Math.PI * 3, 400, 1300)
-        .animatePosition(
-          new Vector2(ctx.canvas.width + 400, middleY),
-          400,
-          1300
-        );
+        .animateRotation(-Math.PI * 0.1, 50, { delay: 250 })
+        .animateRotation(-Math.PI * 0.3, 100, { delay: 300 })
+        .animateRotation(-Math.PI * 0.4, 200, { delay: 400 })
+        .animateRotation(-Math.PI * 0.42, 500, { delay: 600 })
+        .animateRotation(Math.PI / 3, 200, { delay: 1100 })
+        .animateRotation(Math.PI * 3, 400, { delay: 1300 })
+        .animatePosition(new Vector2(ctx.canvas.width + 400, middleY), 400, {
+          delay: 1300,
+        });
       await runAnimation(ctx, entryAnimations);
       isReportSafe = false;
       break;

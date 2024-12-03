@@ -8,6 +8,7 @@ interface AnimatedValue<T extends AnimatedValueType> {
   targetValue: T;
   duration: number;
   delay?: number;
+  onFinish?: (targetValue: T) => void;
 }
 
 export class FieldAnimation<const T extends AnimatedValueType> {
@@ -16,6 +17,7 @@ export class FieldAnimation<const T extends AnimatedValueType> {
   private targetValue: T;
   private startTime: number;
   private duration: number;
+  private onFinish?: (targetValue: T) => void;
   isFinished: boolean;
 
   constructor({
@@ -23,6 +25,7 @@ export class FieldAnimation<const T extends AnimatedValueType> {
     targetValue,
     duration,
     delay = 0,
+    onFinish,
   }: AnimatedValue<T>) {
     this.startValue = null;
     this.getCurrentValue = getCurrentValue;
@@ -30,6 +33,7 @@ export class FieldAnimation<const T extends AnimatedValueType> {
     this.duration = duration;
     this.startTime = Date.now() + delay;
     this.isFinished = false;
+    this.onFinish = onFinish;
   }
 
   get runningTime() {
@@ -52,6 +56,7 @@ export class FieldAnimation<const T extends AnimatedValueType> {
     if (!this.hasStarted()) return this.getCurrentValue();
     if (this.runningTime >= this.duration) {
       this.isFinished = true;
+      this.onFinish?.(this.targetValue);
       return this.targetValue;
     }
     if (this.startValue === null) {

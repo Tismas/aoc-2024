@@ -54,7 +54,7 @@ const animateLabels = (
       keepDrawingAfterAnimation: true,
     })
       .animateOpacity(1, 500)
-      .animatePosition(targetPosition, 1000, 1000);
+      .animatePosition(targetPosition, 1000, { delay: 1000 });
   });
 
   return runAnimation(ctx, animations);
@@ -109,7 +109,7 @@ const animateDistances = async (
         label: distance.toString(),
         opacity: 0,
         keepDrawingAfterAnimation: true,
-      }).animateOpacity(1, 500, i * 100)
+      }).animateOpacity(1, 500, { delay: i * 100 })
     );
   }
 

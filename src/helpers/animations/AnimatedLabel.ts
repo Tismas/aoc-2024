@@ -4,6 +4,11 @@ import { Animatable } from "./Traits";
 
 type RotationOrigin = "right" | "center" | "left";
 
+interface AnimateOptions<T> {
+  delay?: number;
+  onFinish?: (targetValue: T) => void;
+}
+
 interface Args {
   ctx: CanvasRenderingContext2D;
   label: string;
@@ -22,8 +27,8 @@ export class AnimatedLabel implements Animatable {
   private ctx: CanvasRenderingContext2D;
   private label: string;
   private font: string;
-  private color: string;
   private textAlign: CanvasTextAlign;
+  color: string;
 
   private positionAnimations: FieldAnimation<Vector2>[];
   private position: Vector2;
@@ -67,37 +72,52 @@ export class AnimatedLabel implements Animatable {
     this.keepDrawingAfterAnimation = keepDrawingAfterAnimation;
   }
 
-  animatePosition(targetPosition: Vector2, duration: number, delay = 0) {
+  animatePosition(
+    targetPosition: Vector2,
+    duration: number,
+    { delay, onFinish }: AnimateOptions<Vector2> = {}
+  ) {
     this.positionAnimations.push(
       new FieldAnimation({
         getCurrentValue: () => this.position,
         targetValue: targetPosition,
         duration: duration,
         delay,
+        onFinish,
       })
     );
     return this;
   }
 
-  animateOpacity(targetOpacity: number, duration: number, delay = 0) {
+  animateOpacity(
+    targetOpacity: number,
+    duration: number,
+    { delay, onFinish }: AnimateOptions<number> = {}
+  ) {
     this.opacityAnimations.push(
       new FieldAnimation({
         getCurrentValue: () => this.opacity,
         targetValue: targetOpacity,
         duration,
         delay,
+        onFinish,
       })
     );
     return this;
   }
 
-  animateRotation(targetRotation: number, duration: number, delay = 0) {
+  animateRotation(
+    targetRotation: number,
+    duration: number,
+    { delay, onFinish }: AnimateOptions<number> = {}
+  ) {
     this.rotationAnimations.push(
       new FieldAnimation({
         getCurrentValue: () => this.rotation,
         targetValue: targetRotation,
         duration,
         delay,
+        onFinish,
       })
     );
     return this;

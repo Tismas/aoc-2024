@@ -98,8 +98,8 @@ const animateSimilarities = async (
         opacity: 0,
       })
         .animateOpacity(1, 500)
-        .animatePosition(new Vector2(x, marginY), 500, 500)
-        .animateOpacity(0, 500, 500)
+        .animatePosition(new Vector2(x, marginY), 500, { delay: 500 })
+        .animateOpacity(0, 500, { delay: 500 })
     );
     animations.push(
       new AnimatedLabel({
@@ -109,7 +109,7 @@ const animateSimilarities = async (
         opacity: 0,
       })
         .animateOpacity(1, 500)
-        .animateOpacity(0, 500, 500)
+        .animateOpacity(0, 500, { delay: 500 })
     );
     animations.push(
       new AnimatedLabel({
@@ -119,8 +119,8 @@ const animateSimilarities = async (
         opacity: 0,
       })
         .animateOpacity(1, 500)
-        .animatePosition(new Vector2(x, marginY), 500, 500)
-        .animateOpacity(0, 500, 500)
+        .animatePosition(new Vector2(x, marginY), 500, { delay: 500 })
+        .animateOpacity(0, 500, { delay: 500 })
     );
 
     animations.push(
@@ -130,9 +130,9 @@ const animateSimilarities = async (
         label: `+ ${similarityValue.toString()}`,
         opacity: 0,
       })
-        .animateOpacity(1, 250, 1000)
-        .animatePosition(new Vector2(x, marginY - 25), 250, 1250)
-        .animateOpacity(0, 250, 1300)
+        .animateOpacity(1, 250, { delay: 1000 })
+        .animatePosition(new Vector2(x, marginY - 25), 250, { delay: 1250 })
+        .animateOpacity(0, 250, { delay: 1300 })
     );
   }
 

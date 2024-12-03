@@ -7,6 +7,10 @@ export class Vector2 {
     this.y = y;
   }
 
+  add(vec: Vector2): Vector2 {
+    return new Vector2(this.x + vec.x, this.y + vec.y);
+  }
+
   subtract(vec: Vector2): Vector2 {
     return new Vector2(this.x - vec.x, this.y - vec.y);
   }
@@ -17,5 +21,9 @@ export class Vector2 {
 
   getLength(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  equals(vec: Vector2): boolean {
+    return this.x == vec.x && this.y === vec.y;
   }
 }
