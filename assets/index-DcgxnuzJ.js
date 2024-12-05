@@ -1,4 +1,4 @@
-import{V as c,A as r}from"./AnimatedLabel-CAWg7D6J.js";import{r as A}from"./index-C8JnRfwu.js";const S=`MMMSXXMASM
+import{V as c,A as r}from"./AnimatedLabel-CAWg7D6J.js";import{r as A}from"./index-BtqK7B7T.js";const S=`MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
 MSAMASMSMX
