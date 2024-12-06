@@ -26,4 +26,8 @@ export class Vector2 {
   equals(vec: Vector2): boolean {
     return this.x == vec.x && this.y === vec.y;
   }
+
+  toString() {
+    return `${this.x},${this.y}`;
+  }
 }
