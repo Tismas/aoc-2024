@@ -1,4 +1,4 @@
-import{V as c,A as l}from"./AnimatedLabel-CAWg7D6J.js";import{r as p}from"./index-BtqK7B7T.js";const m=`47|53
+import{V as c,A as l}from"./AnimatedLabel-Y1v52lyK.js";import{r as p}from"./index-GOfKAnNf.js";const m=`47|53
 97|13
 97|61
 97|47
