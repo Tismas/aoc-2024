@@ -1,5 +1,4 @@
-import { AnimatedLabel } from "../../helpers/animations/AnimatedLabel";
-import { runAnimation } from "../../helpers/animations/runAnimations";
+import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { isBetween } from "../../helpers/primitives";
 import { Vector2 } from "../../helpers/Vector2";
 import input from "./input.txt?raw";
@@ -42,15 +41,7 @@ export const part1 = (ctx: CanvasRenderingContext2D) => {
     moveGuard(guard, obstacles);
   }
 
-  const middle = new Vector2(ctx.canvas.width / 2, ctx.canvas.height / 2);
-  const resultAnimation = new AnimatedLabel({
-    ctx,
-    label: `Animation in construction... Result for example input: ${visited.size}`,
-    position: middle,
-    opacity: 0,
-  }).animateOpacity(1, 1000);
-
-  runAnimation(ctx, [resultAnimation]);
+  showInConstruction(ctx, visited.size);
 };
 
 const moveGuard = (guard: Guard, obstacles: Vector2[]) => {

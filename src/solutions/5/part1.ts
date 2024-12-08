@@ -1,6 +1,4 @@
-import { AnimatedLabel } from "../../helpers/animations/AnimatedLabel";
-import { runAnimation } from "../../helpers/animations/runAnimations";
-import { Vector2 } from "../../helpers/Vector2";
+import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import input from "./input.txt?raw";
 
 export const part1 = (ctx: CanvasRenderingContext2D) => {
@@ -13,22 +11,14 @@ export const part1 = (ctx: CanvasRenderingContext2D) => {
     .split("\n")
     .map((update) => update.split(",").map(Number));
 
-  let sum = 0;
+  let result = 0;
   for (const update of updates) {
     if (isCorrect(update, ordering)) {
-      sum += update[Math.floor(update.length / 2)];
+      result += update[Math.floor(update.length / 2)];
     }
   }
 
-  const middle = new Vector2(ctx.canvas.width / 2, ctx.canvas.height / 2);
-  const resultAnimation = new AnimatedLabel({
-    ctx,
-    label: `Animation in construction... Result for example input: ${sum}`,
-    position: middle,
-    opacity: 0,
-  }).animateOpacity(1, 1000);
-
-  runAnimation(ctx, [resultAnimation]);
+  showInConstruction(ctx, result);
 };
 
 const isCorrect = (update: number[], ordering: number[][]): boolean => {

@@ -1,3 +1,5 @@
+import { isBetween } from "./primitives";
+
 export class Vector2 {
   x: number;
   y: number;
@@ -25,6 +27,21 @@ export class Vector2 {
 
   equals(vec: Vector2): boolean {
     return this.x == vec.x && this.y === vec.y;
+  }
+
+  multiply(constant: number): Vector2 {
+    return new Vector2(this.x * constant, this.y * constant);
+  }
+
+  isInBound(
+    xLower: number,
+    xUpper: number,
+    yLower: number,
+    yUpper: number
+  ): boolean {
+    return (
+      isBetween(this.x, xLower, xUpper) && isBetween(this.y, yLower, yUpper)
+    );
   }
 
   toString() {
