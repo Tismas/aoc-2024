@@ -103,15 +103,3 @@ const insertNodeAfter = (node: Node, prev: Node) => {
   }
   prev.next = node;
 };
-
-const debug = (head: Node | null) => {
-  const disk = [];
-
-  while (head) {
-    disk.push(...new Array(head.size).fill(head.fileId));
-    disk.push(...new Array(head.freeSpaceAfter).fill("."));
-    head = head.next;
-  }
-
-  console.log(disk.join(""));
-};
