@@ -14,6 +14,7 @@
     <style>
       :root {
         --bg: #ccc;
+        --bg-lighter: #b3b3b3;
         --bg-hover: #bbb;
         --bg-active: #aaa;
         --fg: #111;
@@ -21,6 +22,7 @@
       @media (prefers-color-scheme: dark) {
         :root {
           --bg: #111;
+          --bg-lighter: #1a1a1a;
           --bg-hover: #222;
           --bg-active: #333;
           --fg: #ccc;
@@ -29,11 +31,11 @@
 
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        margin: 0;
-        padding: 0;
         background: var(--bg);
         color: var(--fg);
         font-family: "Inter", sans-serif;
@@ -50,6 +52,7 @@
         padding: 16px 32px;
         border-radius: 8px;
         cursor: pointer;
+        border: 1px solid var(--bg-hover);
       }
       button.active {
         background: var(--bg-active);
@@ -57,9 +60,13 @@
       button:hover {
         background: var(--bg-hover);
       }
-      #days {
+      .days {
         display: flex;
-        flex-wrap: wrap;
+        gap: 8px;
+        overflow: scroll;
+      }
+      .part {
+        display: flex;
         gap: 8px;
       }
       .day-tile {
@@ -68,14 +75,48 @@
       }
       .day-tile:hover {
       }
+      .puzzle-input-wrapper {
+        display: flex;
+        padding: 8px;
+        gap: 8px;
+        visibility: hidden;
+      }
+      .puzzle-input {
+        flex: 1;
+        background: var(--bg-lighter);
+        color: var(--fg);
+        resize: none;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--bg-hover);
+        border-radius: 6px;
+        border: 3px solid var(--bg);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--bg-active);
+      }
+      ::-webkit-scrollbar-corner {
+        background: rgba(0, 0, 0, 0);
+      }
     </style>
-    <script type="module" crossorigin src="/aoc-2024/assets/index-GOfKAnNf.js"></script>
+    <script type="module" crossorigin src="/aoc-2024/assets/index-D6-CqtiA.js"></script>
   </head>
   <body>
     <div id="ui">
-      <div id="days"></div>
-      <div id="part"></div>
+      <div id="days" class="days"></div>
+      <div id="part" class="part"></div>
     </div>
     <canvas id="solution"></canvas>
+    <div class="puzzle-input-wrapper" id="puzzle-input-wrapper">
+      <textarea class="puzzle-input" rows="4" id="puzzle-input"></textarea>
+      <button id="run-button">Run</button>
+    </div>
   </body>
 </html>
