@@ -1,7 +1,6 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { isBetween } from "../../helpers/primitives";
 import { Vector2 } from "../../helpers/Vector2";
-import input from "./input.txt?raw";
 
 type Direction = "up" | "down" | "left" | "right";
 
@@ -10,7 +9,7 @@ interface Guard {
   direction: Direction;
 }
 
-export const part2 = (ctx: CanvasRenderingContext2D) => {
+export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   const map = input.split("\n");
   const height = map.length;
   const width = map[0].length;

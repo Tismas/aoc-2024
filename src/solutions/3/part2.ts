@@ -1,8 +1,7 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { sum } from "../../helpers/array";
-import input from "./input.txt?raw";
 
-export const part2 = (ctx: CanvasRenderingContext2D) => {
+export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   let enabled = true;
   const commands = [
     ...input.matchAll(/mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)/g),

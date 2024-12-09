@@ -6,14 +6,13 @@ import {
 } from "../../helpers/animations/runAnimations";
 import { zip } from "../../helpers/array";
 import { Vector2 } from "../../helpers/Vector2";
-import input from "./input.txt?raw";
 
 const marginY = 200;
 const spacingY = 100;
 const spacingX = 200;
 const fontSize = 24;
 
-export const part2 = async (ctx: CanvasRenderingContext2D) => {
+export const part2 = async (ctx: CanvasRenderingContext2D, input: string) => {
   const rows = input.split("\n").map((line) => line.split("   ").map(Number));
   const [left, right] = zip(...rows);
 

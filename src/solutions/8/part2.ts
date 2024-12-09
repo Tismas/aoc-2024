@@ -1,8 +1,7 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { Vector2 } from "../../helpers/Vector2";
-import input from "./input.txt?raw";
 
-export const part2 = (ctx: CanvasRenderingContext2D) => {
+export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   const antennas: Record<string, Vector2[]> = {};
 
   const map = input.split("\n").map((row) => row.trim());

@@ -1,7 +1,6 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
-import input from "./input.txt?raw";
 
-export const part2 = (ctx: CanvasRenderingContext2D) => {
+export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   const equations = input.split("\n");
   let result = 0;
 

@@ -5,9 +5,8 @@ import {
   runAnimation,
 } from "../../helpers/animations/runAnimations";
 import { Vector2 } from "../../helpers/Vector2";
-import input from "./input.txt?raw";
 
-export const part2 = async (ctx: CanvasRenderingContext2D) => {
+export const part2 = async (ctx: CanvasRenderingContext2D, input: string) => {
   const reports = input
     .split("\n")
     .map((report) => report.split(" ").map(Number));

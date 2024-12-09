@@ -1,8 +1,7 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { sum } from "../../helpers/array";
-import input from "./input.txt?raw";
 
-export const part1 = (ctx: CanvasRenderingContext2D) => {
+export const part1 = (ctx: CanvasRenderingContext2D, input: string) => {
   const validMultiplications = [
     ...input.matchAll(/mul\((\d{1,3}),(\d{1,3})\)/g),
   ];

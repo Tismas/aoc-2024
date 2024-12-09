@@ -1,5 +1,4 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
-import input from "./input.txt?raw";
 
 interface Node {
   next: Node | null;
@@ -9,7 +8,7 @@ interface Node {
   freeSpaceAfter: number;
 }
 
-export const part2 = (ctx: CanvasRenderingContext2D) => {
+export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   const diskData = input.split("").map(Number);
   let head: Node | null = null;
   let tail: Node | null = null;
