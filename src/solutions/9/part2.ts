@@ -60,11 +60,14 @@ const defrag = (head: Node, right: Node): void => {
   let left = head;
 
   while (left !== right) {
-    const secondToLast = right.prev!;
+    const secondToLast = right.prev;
     if (tryToMove(left, right)) {
+      if (!secondToLast) return;
       return defrag(head, secondToLast);
     }
-    right = right.prev!;
+
+    if (!right.prev) return;
+    right = right.prev;
   }
 };
 
@@ -75,7 +78,8 @@ const tryToMove = (left: Node, right: Node) => {
       insertNodeAfter(right, left);
       return true;
     }
-    left = left.next!;
+    if (!left.next) return;
+    left = left.next;
   }
   return false;
 };
