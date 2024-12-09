@@ -35,9 +35,7 @@ export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
 
   if (!tail || !head) throw new Error("wtf?");
 
-  debug(head);
   defrag(head, tail);
-  debug(head);
 
   let sum = 0;
   let node: Node | null = head;
@@ -110,17 +108,4 @@ const insertNodeAfter = (node: Node, prev: Node) => {
     prev.next.prev = node;
   }
   prev.next = node;
-};
-
-const debug = (head: Node) => {
-  const memory = [];
-
-  let node: Node | null = head;
-  while (node) {
-    memory.push(...new Array(node.size).fill(node.fileId));
-    memory.push(...new Array(node.freeSpaceAfter).fill("."));
-    node = node.next;
-  }
-
-  console.log(memory.join(""));
 };
