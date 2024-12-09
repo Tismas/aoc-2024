@@ -14,5 +14,6 @@ export const showInConstruction = (
     opacity: 0,
   }).animateOpacity(1, 1000);
 
+  console.log(result);
   runAnimation(ctx, [resultAnimation]);
 };
