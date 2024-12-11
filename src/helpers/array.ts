@@ -14,3 +14,24 @@ export const zip = <E>(...arrays: Array<Array<E>>) => {
 export const sum = (arr: number[]): number => {
   return arr.reduce((acc, v) => acc + v, 0);
 };
+
+export const range = (min: number, max: number, step = 1): number[] => {
+  const result = [];
+
+  for (let i = min; i < max; i += step) {
+    result.push(i);
+  }
+
+  return result;
+};
+
+export const chunk = <T>(arr: Array<T>, chunksCount: number): Array<Array<T>> => {
+  const chunkSize = arr.length / chunksCount;
+  const chunks = [];
+
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    chunks.push(arr.slice(i, i + chunkSize));
+  }
+
+  return chunks;
+};
