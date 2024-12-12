@@ -33,15 +33,17 @@ export class Vector2 {
     return new Vector2(this.x * constant, this.y * constant);
   }
 
-  isInBound(
-    xLower: number,
-    xUpper: number,
-    yLower: number,
-    yUpper: number
-  ): boolean {
-    return (
-      isBetween(this.x, xLower, xUpper) && isBetween(this.y, yLower, yUpper)
-    );
+  isInBound(xLower: number, xUpper: number, yLower: number, yUpper: number): boolean {
+    return isBetween(this.x, xLower, xUpper) && isBetween(this.y, yLower, yUpper);
+  }
+
+  getAdjacent() {
+    return [
+      new Vector2(this.x + 1, this.y),
+      new Vector2(this.x - 1, this.y),
+      new Vector2(this.x, this.y + 1),
+      new Vector2(this.x, this.y - 1),
+    ];
   }
 
   toString() {

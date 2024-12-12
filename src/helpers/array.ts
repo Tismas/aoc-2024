@@ -35,3 +35,15 @@ export const chunk = <T>(arr: Array<T>, chunksCount: number): Array<Array<T>> =>
 
   return chunks;
 };
+
+export const groupBy = <T>(arr: Array<T>, by: (el: T) => string | number): T[][] => {
+  const groups: Record<string, T[]> = {};
+
+  arr.forEach((el) => {
+    const index = by(el);
+    groups[index] ||= [];
+    groups[index].push(el);
+  });
+
+  return Object.values(groups);
+};
