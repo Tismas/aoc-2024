@@ -1,1 +1,0 @@
-const o=(...e)=>{const s=[];for(let t=0;t<e[0].length;t++){s[t]=[];for(let n=0;n<e.length;n++)s[t][n]=e[n][t]}return s},u=e=>e.reduce((s,t)=>s+t,0),l=(e,s,t=1)=>{const n=[];for(let c=e;c<s;c+=t)n.push(c);return n},r=(e,s)=>{const t=e.length/s,n=[];for(let c=0;c<e.length;c+=t)n.push(e.slice(c,c+t));return n};export{r as c,l as r,u as s,o as z};
