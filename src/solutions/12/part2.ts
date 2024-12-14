@@ -33,8 +33,8 @@ export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
 
   let sum = 0;
   for (const region of regions) {
-    const rows = groupBy(region.plots, (plot) => plot.y);
-    const columns = groupBy(region.plots, (plot) => plot.x);
+    const rows = Object.values(groupBy(region.plots, (plot) => plot.y));
+    const columns = Object.values(groupBy(region.plots, (plot) => plot.x));
 
     const edgesX = getEdges(rows, (plot) => plot.x);
     const edgesY = getEdges(columns, (plot) => plot.y);

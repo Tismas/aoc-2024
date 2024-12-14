@@ -29,6 +29,10 @@ export class Vector2 {
     return this.x == vec.x && this.y === vec.y;
   }
 
+  modulo(vec: Vector2): Vector2 {
+    return new Vector2(this.x % vec.x, this.y % vec.y);
+  }
+
   multiply(constant: number): Vector2 {
     return new Vector2(this.x * constant, this.y * constant);
   }

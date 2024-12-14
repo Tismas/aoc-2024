@@ -36,7 +36,7 @@ export const chunk = <T>(arr: Array<T>, chunksCount: number): Array<Array<T>> =>
   return chunks;
 };
 
-export const groupBy = <T>(arr: Array<T>, by: (el: T) => string | number): T[][] => {
+export const groupBy = <T>(arr: Array<T>, by: (el: T) => string | number): Record<string, T[]> => {
   const groups: Record<string, T[]> = {};
 
   arr.forEach((el) => {
@@ -45,5 +45,5 @@ export const groupBy = <T>(arr: Array<T>, by: (el: T) => string | number): T[][]
     groups[index].push(el);
   });
 
-  return Object.values(groups);
+  return groups;
 };
