@@ -4,16 +4,14 @@ const uiContainer = document.getElementById("ui")!;
 const daysContainer = document.getElementById("days")!;
 const partContainer = document.getElementById("part")!;
 const solutionCanvas = document.getElementById("solution") as HTMLCanvasElement;
-const puzzleInputContainer = document.getElementById(
-  "puzzle-input-wrapper"
-) as HTMLDivElement;
-const puzzleInputElement = document.getElementById(
-  "puzzle-input"
-) as HTMLTextAreaElement;
+const puzzleInputContainer = document.getElementById("puzzle-input-wrapper") as HTMLDivElement;
+const puzzleInputElement = document.getElementById("puzzle-input") as HTMLTextAreaElement;
 const runButton = document.getElementById("run-button") as HTMLButtonElement;
 const ctx = solutionCanvas.getContext("2d")!;
 
 window.addEventListener("resize", handleResize);
+const activeModuleLastVisitKey = "last-active-module";
+const activeModuleLastVisit = localStorage.getItem(activeModuleLastVisitKey);
 let activeModule: Module | null = null;
 let activePart: 1 | 2 | null = null;
 
@@ -85,6 +83,7 @@ async function addDayButtons() {
       dayTile.classList.add("day-tile");
       dayTile.textContent = `Day ${i}`;
       dayTile.onclick = () => {
+        localStorage.setItem(activeModuleLastVisitKey, i.toString());
         activeModule = module;
         clearCanvas();
         partContainer.replaceChildren();
@@ -97,6 +96,9 @@ async function addDayButtons() {
 
         addPartButtons();
       };
+      if (activeModuleLastVisit === i.toString()) {
+        dayTile.click();
+      }
       daysContainer.appendChild(dayTile);
     } catch (e) {
       break;
