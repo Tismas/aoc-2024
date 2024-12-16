@@ -1,4 +1,4 @@
-import{s as c}from"./showInConstructionMessage-BmKh2uFn.js";import"./AnimatedLabel-CdFvQLtw.js";import"./index-CeBcNwP1.js";const O=(n,o)=>{const[t,s]=o.split(`
+import{s as c}from"./showInConstructionMessage-BJAcs5Og.js";import"./AnimatedLabel-CdFvQLtw.js";import"./index-qeC7srZf.js";const O=(n,o)=>{const[t,s]=o.split(`
 
 `),e=t.split(`
 `).map(r=>r.split("|").map(Number)),i=s.split(`
