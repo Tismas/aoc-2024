@@ -1,4 +1,4 @@
-import{s as m}from"./showInConstructionMessage-BJwZSrBn.js";import{V as f}from"./AnimatedLabel-CdFvQLtw.js";import"./index-ae_RvL4o.js";const I=(v,t)=>{const[O,n]=t.split(`
+import{s as m}from"./showInConstructionMessage-BmKh2uFn.js";import{V as f}from"./AnimatedLabel-CdFvQLtw.js";import"./index-CeBcNwP1.js";const I=(v,t)=>{const[O,n]=t.split(`
 
 `),o=O.split(`
 `).map(s=>s.trim().split(""));let r=p(o);o[r.y][r.x]=".";for(const s of n.replaceAll(`
