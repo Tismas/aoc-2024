@@ -11,7 +11,9 @@ const ctx = solutionCanvas.getContext("2d")!;
 
 window.addEventListener("resize", handleResize);
 const activeModuleLastVisitKey = "last-active-module";
-const activeModuleLastVisit = localStorage.getItem(activeModuleLastVisitKey);
+let activeModuleLastVisit = localStorage.getItem(activeModuleLastVisitKey);
+const activePartLastVisitKey = "last-active-part";
+let activePartLastVisit = localStorage.getItem(activePartLastVisitKey);
 let activeModule: Module | null = null;
 let activePart: 1 | 2 | null = null;
 
@@ -56,6 +58,7 @@ function addPartButtons() {
     runSolution();
     part1Button.classList.add("active");
     part2Button.classList.remove("active");
+    localStorage.setItem(activePartLastVisitKey, "1");
   };
   const part2Button = document.createElement("button");
   part2Button.textContent = "Part 2";
@@ -67,12 +70,20 @@ function addPartButtons() {
     runSolution();
     part1Button.classList.remove("active");
     part2Button.classList.add("active");
+    localStorage.setItem(activePartLastVisitKey, "2");
   };
 
   partContainer.appendChild(part1Button);
   partContainer.appendChild(part2Button);
 
   handleResize();
+
+  if (activePartLastVisit === "1") {
+    part1Button.click();
+  }
+  if (activePartLastVisit === "2") {
+    part2Button.click();
+  }
 }
 
 async function addDayButtons() {
@@ -83,6 +94,7 @@ async function addDayButtons() {
       dayTile.classList.add("day-tile");
       dayTile.textContent = `Day ${i}`;
       dayTile.onclick = () => {
+        activeModuleLastVisit = i.toString();
         localStorage.setItem(activeModuleLastVisitKey, i.toString());
         activeModule = module;
         clearCanvas();

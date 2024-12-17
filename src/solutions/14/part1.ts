@@ -22,7 +22,7 @@ export const part1 = (ctx: CanvasRenderingContext2D, input: string) => {
   });
 
   const result = getQuadrantSizes(robots).reduce((acc, x) => acc * x, 1);
-  showInConstruction(ctx, result, "Result for my input:");
+  showInConstruction(ctx, result);
 };
 
 const parseRobot = (rawRobot: string): Robot => {
