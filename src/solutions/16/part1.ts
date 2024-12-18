@@ -1,10 +1,8 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { Vector2 } from "../../helpers/Vector2";
 
-type Direction = "E" | "W" | "N" | "S";
-let visited: Record<string, number | undefined> = {};
-let cheapest = Infinity;
-const maxCost = 100_000;
+const directions = ["E", "W", "N", "S"] as const;
+type Direction = (typeof directions)[number];
 
 export const part1 = (ctx: CanvasRenderingContext2D, input: string) => {
   const grid = input.split("\n").map((row) => row.trim().split(""));
@@ -13,11 +11,9 @@ export const part1 = (ctx: CanvasRenderingContext2D, input: string) => {
   grid[start.y][start.x] = ".";
   grid[end.y][end.x] = ".";
 
-  visited = {};
-  cheapest = Infinity;
   const result = findWay(grid, start, end);
 
-  showInConstruction(ctx, result);
+  showInConstruction(ctx, result.cost);
 };
 
 const getStartAndEndPositions = (grid: string[][]): [Vector2, Vector2] => {
@@ -33,40 +29,57 @@ const getStartAndEndPositions = (grid: string[][]): [Vector2, Vector2] => {
   return [start, end];
 };
 
-const findWay = (
-  grid: string[][],
-  currentPos: Vector2,
-  target: Vector2,
-  direction: Direction = "E",
-  cost = 0
-): number => {
-  const delta = directionToDelta[direction];
-  const nextPos = currentPos.add(delta);
+interface Node {
+  cost: number;
+  direction: Direction;
+  position: Vector2;
+  prev: Node | null;
+}
 
-  const cacheKey = `${currentPos},${direction}`;
-  const prevCost = visited[cacheKey];
-  if ((prevCost && prevCost <= cost) || cost > Math.min(maxCost, cheapest)) return Infinity;
-  visited[cacheKey] = cost;
+const findWay = (grid: string[][], startingPosition: Vector2, target: Vector2): Node => {
+  const nodes: Record<string, Node> = {};
+  const startingNode: Node = {
+    cost: 0,
+    direction: "E",
+    position: startingPosition,
+    prev: null,
+  };
+  nodes[startingPosition.toString()] = startingNode;
 
-  if (currentPos.equals(target)) {
-    if (cheapest > cost) {
-      cheapest = cost;
+  let toCheck = [startingNode];
+  while (toCheck.length) {
+    const nextCheck: Node[] = [];
+
+    for (const node of toCheck) {
+      for (const direction of directions) {
+        const nextNode = getNextNodeInDirection(node, direction);
+        if (grid[nextNode.position.y][nextNode.position.x] !== ".") continue;
+
+        const existingNode = nodes[nextNode.position.toString()];
+        if (!existingNode || existingNode.cost > nextNode.cost) {
+          nodes[nextNode.position.toString()] = nextNode;
+          nextCheck.push(nextNode);
+        }
+      }
     }
-    return cost;
+
+    toCheck = nextCheck;
   }
 
-  if (grid[nextPos.y][nextPos.x] === "#") {
-    return Math.min(
-      findWay(grid, currentPos, target, clockwise[direction], cost + 1000),
-      findWay(grid, currentPos, target, counterClockwise[direction], cost + 1000)
-    );
-  }
+  return nodes[target.toString()];
+};
 
-  return Math.min(
-    findWay(grid, nextPos, target, direction, cost + 1),
-    findWay(grid, currentPos, target, clockwise[direction], cost + 1000),
-    findWay(grid, currentPos, target, counterClockwise[direction], cost + 1000)
-  );
+const getNextNodeInDirection = (node: Node, direction: Direction): Node => {
+  const cost =
+    node.cost + (direction === node.direction ? 1 : direction === oppositeDirection[node.direction] ? 2001 : 1001);
+  const position = node.position.add(directionToDelta[direction]);
+
+  return {
+    cost,
+    direction,
+    position,
+    prev: node,
+  };
 };
 
 const directionToDelta: Record<Direction, Vector2> = {
@@ -76,15 +89,9 @@ const directionToDelta: Record<Direction, Vector2> = {
   S: new Vector2(0, 1),
 };
 
-const clockwise: Record<Direction, Direction> = {
-  W: "N",
-  N: "E",
-  E: "S",
-  S: "W",
-};
-const counterClockwise: Record<Direction, Direction> = {
-  W: "S",
-  S: "E",
-  E: "N",
-  N: "W",
+const oppositeDirection: Record<Direction, Direction> = {
+  W: "E",
+  N: "S",
+  E: "W",
+  S: "N",
 };

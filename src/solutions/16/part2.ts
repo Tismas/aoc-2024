@@ -1,11 +1,8 @@
 import { showInConstruction } from "../../helpers/animations/showInConstructionMessage";
 import { Vector2 } from "../../helpers/Vector2";
 
-type Direction = "E" | "W" | "N" | "S";
-let visited: Record<string, number | undefined> = {};
-let bestPaths: Array<Set<string>> = [];
-let cheapest = Infinity;
-const maxCost = 100_000;
+const directions = ["E", "W", "N", "S"] as const;
+type Direction = (typeof directions)[number];
 
 export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   const grid = input.split("\n").map((row) => row.trim().split(""));
@@ -14,13 +11,22 @@ export const part2 = (ctx: CanvasRenderingContext2D, input: string) => {
   grid[start.y][start.x] = ".";
   grid[end.y][end.x] = ".";
 
-  visited = {};
-  bestPaths = [];
-  cheapest = Infinity;
-  findWay(grid, start, end);
-  const partOfBestPaths = bestPaths.reduce((acc, history) => acc.union(history), new Set<string>());
+  const result = findWay(grid, start, end);
+  const partsOfBestPaths = new Set<string>();
 
-  showInConstruction(ctx, partOfBestPaths.size);
+  let last: Node[] = result ? [result] : [];
+  while (last.length) {
+    const nextLast: Node[] = [];
+
+    for (const node of last) {
+      partsOfBestPaths.add(node.position.toString());
+      nextLast.push(...node.prev);
+    }
+
+    last = nextLast;
+  }
+
+  showInConstruction(ctx, partsOfBestPaths.size);
 };
 
 const getStartAndEndPositions = (grid: string[][]): [Vector2, Vector2] => {
@@ -36,45 +42,72 @@ const getStartAndEndPositions = (grid: string[][]): [Vector2, Vector2] => {
   return [start, end];
 };
 
-const findWay = (
-  grid: string[][],
-  currentPos: Vector2,
-  target: Vector2,
-  direction: Direction = "E",
-  cost = 0,
-  history = new Set<string>()
-): number => {
-  const delta = directionToDelta[direction];
-  const nextPos = currentPos.add(delta);
+interface Node {
+  cost: number;
+  direction: Direction;
+  position: Vector2;
+  prev: Node[];
+}
 
-  const cacheKey = `${currentPos},${direction}`;
-  const prevCost = visited[cacheKey];
-  if ((prevCost && prevCost < cost) || cost > Math.min(cheapest, maxCost)) return Infinity;
-  visited[cacheKey] = cost;
+const findWay = (grid: string[][], startingPosition: Vector2, target: Vector2): Node | undefined => {
+  const visited: Record<string, Node> = {};
+  const startingNode: Node = {
+    cost: 0,
+    direction: "E",
+    position: startingPosition,
+    prev: [],
+  };
+  visited[`${startingPosition.toString()},${startingNode.direction}`] = startingNode;
 
-  history.add(currentPos.toString());
-  if (currentPos.equals(target)) {
-    if (cheapest > cost) {
-      bestPaths = [history];
-      cheapest = cost;
-    } else if (cheapest === cost) {
-      bestPaths.push(history);
+  let toCheck = [startingNode];
+  while (toCheck.length) {
+    const nextCheck: Node[] = [];
+
+    for (const node of toCheck) {
+      for (const direction of directions) {
+        const nextPosition = node.position.add(directionToDelta[direction]);
+        if (grid[nextPosition.y][nextPosition.x] !== ".") continue;
+
+        const nextNode = getNextNode(node, nextPosition, direction);
+        const nodeKey = `${nextNode.position.toString()},${nextNode.direction}`;
+        const existingNode = visited[nodeKey];
+
+        if (existingNode && existingNode.cost == nextNode.cost) {
+          existingNode.prev.push(node);
+        }
+        if (!existingNode || existingNode.cost > nextNode.cost) {
+          visited[nodeKey] = nextNode;
+          nextCheck.push(nextNode);
+        }
+      }
     }
-    return cost;
+
+    toCheck = nextCheck;
   }
 
-  if (grid[nextPos.y][nextPos.x] === "#") {
-    return Math.min(
-      findWay(grid, currentPos, target, clockwise[direction], cost + 1000, new Set(history)),
-      findWay(grid, currentPos, target, counterClockwise[direction], cost + 1000, new Set(history))
-    );
+  return Object.values(visited)
+    .sort((a, b) => a.cost - b.cost)
+    .find((v) => v.position.equals(target));
+};
+
+const getNextNode = (parent: Node, nextPosition: Vector2, direction: Direction): Node => {
+  if (direction === parent.direction) {
+    return {
+      cost: parent.cost + 1,
+      direction,
+      position: nextPosition,
+      prev: [parent],
+    };
   }
 
-  return Math.min(
-    findWay(grid, nextPos, target, direction, cost + 1, new Set(history)),
-    findWay(grid, currentPos, target, clockwise[direction], cost + 1000, new Set(history)),
-    findWay(grid, currentPos, target, counterClockwise[direction], cost + 1000, new Set(history))
-  );
+  const cost = parent.cost + (direction === oppositeDirection[parent.direction] ? 2000 : 1000);
+
+  return {
+    cost,
+    direction,
+    position: parent.position,
+    prev: [parent],
+  };
 };
 
 const directionToDelta: Record<Direction, Vector2> = {
@@ -84,15 +117,9 @@ const directionToDelta: Record<Direction, Vector2> = {
   S: new Vector2(0, 1),
 };
 
-const clockwise: Record<Direction, Direction> = {
-  W: "N",
-  N: "E",
-  E: "S",
-  S: "W",
-};
-const counterClockwise: Record<Direction, Direction> = {
-  W: "S",
-  S: "E",
-  E: "N",
-  N: "W",
+const oppositeDirection: Record<Direction, Direction> = {
+  W: "E",
+  N: "S",
+  E: "W",
+  S: "N",
 };
