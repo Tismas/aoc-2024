@@ -20,6 +20,9 @@ export class Vector2 {
   distanceTo(vec: Vector2): number {
     return vec.subtract(this).getLength();
   }
+  manhattanDistanceTo(vec: Vector2): number {
+    return Math.abs(this.x - vec.x) + Math.abs(this.y - vec.y);
+  }
 
   getLength(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -52,5 +55,9 @@ export class Vector2 {
 
   toString() {
     return `${this.x},${this.y}`;
+  }
+
+  copy() {
+    return new Vector2(this.x, this.y);
   }
 }
