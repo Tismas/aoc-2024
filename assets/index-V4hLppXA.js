@@ -1,4 +1,4 @@
-import{s as m}from"./showInConstructionMessage-C9RX0ogS.js";import"./AnimatedLabel-CVP5itg0.js";import"./index-ClbbcqQg.js";const R=(e,n)=>{const[o,r]=n.split(`
+import{s as m}from"./showInConstructionMessage-0zp86OSb.js";import"./AnimatedLabel-CVP5itg0.js";import"./index-CNKGbUPc.js";const R=(e,n)=>{const[o,r]=n.split(`
 
 `),t=o.split(`
 `).map(b),i=r.replace("Program: ","").split(",").map(Number);let c=0;const u=[];for(;c<i.length;){const s=i[c],l=i[c+1];if(s===0)t[0]=a(l,t);else if(s===1)t[1]=t[1]^l;else if(s===2)t[1]=p(l,t)%8;else if(s===3){if(t[0]!==0){c=l;continue}}else s===4?t[1]=t[1]^t[2]:s===5?u.push(p(l,t)%8):s===6?t[1]=a(l,t):s===7&&(t[2]=a(l,t));c+=2}m(e,u.join(","))},b=e=>{var r,t;const n=/Register [A|B|C]: (?<value>\d+)/,o=(t=(r=e.match(n))==null?void 0:r.groups)==null?void 0:t.value;if(!o)throw new Error(`Failed to parse register: ${e}`);return Number(o)},p=(e,n)=>{if(e<=3)return e;if(e<=6)return n[e-4];throw new Error("Invalid combo operand")},a=(e,n)=>n[0]>>p(e,n),C=(e,n)=>{const[o,r]=n.split(`
