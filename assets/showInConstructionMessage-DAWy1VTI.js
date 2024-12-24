@@ -1,0 +1,1 @@
+import{V as s,A as e}from"./AnimatedLabel-CVP5itg0.js";import{r}from"./index-CWLejmAq.js";const l=(n,o,i="Animation in construction... Result for the input:")=>{const t=new s(n.canvas.width/2,n.canvas.height/2),a=new e({ctx:n,label:`${i} ${o}`,position:t,opacity:0}).animateOpacity(1,1e3);console.log(o),r(n,[a])};export{l as s};
